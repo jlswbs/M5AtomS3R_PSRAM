@@ -24,14 +24,14 @@ float randomf(float minf, float maxf) {return minf + (esp_random()%(1UL << 31)) 
 void rndrule(){
   
   memset((uint16_t *) col, 0, 4*SCR);
-  memset(pat, 0, 4*SCR);
+  memset(pat, 1.0f, 4*SCR);
 
   for(int i=0; i<COLN; i++) colors[i] = esp_random();
 
   lim = 64 + esp_random() % 128;
   dirs = 6 + esp_random() % 5;
 
-  pat[(WIDTH/2)+(HEIGHT/2)*WIDTH] = 1.0f;
+  pat[(WIDTH/2)+(HEIGHT/2)*WIDTH] = PI;
 
 }
 
