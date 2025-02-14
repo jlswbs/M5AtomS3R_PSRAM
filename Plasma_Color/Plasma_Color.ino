@@ -5,14 +5,13 @@
 #define WIDTH   130
 #define HEIGHT  130
 #define SCR     (WIDTH*HEIGHT)
-#define SCRX    WIDTH/2
-#define SCRY    HEIGHT/2
-#define COLN    16
+#define COLN    20
 
 float randomf(float minf, float maxf) {return minf + (esp_random()%(1UL << 31)) * (maxf - minf) / (1UL << 31);}
 
   uint16_t *col = NULL;
-  float times, alpha, delta;
+  float times, alpha;
+  int offx, offy;
   uint16_t colors[COLN];
 
 void rndrule(){
@@ -20,8 +19,10 @@ void rndrule(){
   memset((uint16_t *) col, 0, 4*SCR);
 
   for(int i=0; i<COLN; i++) colors[i] = esp_random();
-  alpha = randomf(4.0f, 40.0f);
-  delta = randomf(0.002f, 0.2f);
+  alpha = randomf(8.0f, 40.0f);
+  offx = esp_random()%WIDTH;
+  offy = esp_random()%HEIGHT;
+  times = 0;
 
 }
 
@@ -48,8 +49,8 @@ void loop(void){
     for (int i=0;i<WIDTH;i++) {
       
       float value1 = sinf((i*sinf(times/2.0f)+j*cosf(times/3.0f))/alpha+times);
-      float distance = sqrtf(((SCRX-i)*(SCRX-i))+((SCRY-j)*(SCRY-j)));   
-      float value2 = (sinf(distance/alpha)) + times;
+      float distance = sqrtf(((offx-i)*(offx-i))+((offy-j)*(offy-j)));   
+      float value2 = sinf((distance/alpha) + times);
             
       uint8_t coll = COLN * fabs(sinf((value1+value2) * PI));
       col[i+j*WIDTH] = colors[coll%COLN];
@@ -58,7 +59,7 @@ void loop(void){
     
   }
 
-  times += delta;
+  times += 0.1f;
 
   AtomS3.Display.pushImage(0, 0, WIDTH, HEIGHT, col);
   AtomS3.update();
